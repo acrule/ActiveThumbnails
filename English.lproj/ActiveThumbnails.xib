@@ -13,6 +13,8 @@
                 <outlet property="animationTypeButton" destination="377-iT-a29" id="3h3-ag-6ic"/>
                 <outlet property="animationView" destination="LkR-nn-NYh" id="dsV-mT-Y0Q"/>
                 <outlet property="arrayController" destination="NkI-a8-jn8" id="hSX-yl-Zx4"/>
+                <outlet property="exp" destination="6HW-9N-WUX" id="7dm-bs-0DV"/>
+                <outlet property="experienceView" destination="3ZF-3U-coc" id="ovB-fa-vb4"/>
                 <outlet property="extentButton" destination="hk1-Cu-VVN" id="C7T-19-7dm"/>
                 <outlet property="label" destination="lIN-dI-qeQ" id="sLv-qk-bBK"/>
                 <outlet property="mainImage" destination="yoV-iE-un6" id="Cqq-2u-ecd"/>
@@ -325,7 +327,7 @@
                                                 <binding destination="NkI-a8-jn8" name="value" keyPath="arrangedObjects.time" id="Fgj-NB-Rbs"/>
                                             </connections>
                                         </tableColumn>
-                                        <tableColumn width="72.5" minWidth="40" maxWidth="1000" id="ZL6-MH-Eg8">
+                                        <tableColumn width="73" minWidth="40" maxWidth="1000" id="ZL6-MH-Eg8">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Project">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -347,10 +349,10 @@
                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="7Cx-3l-AcD">
-                            <rect key="frame" x="1" y="132" width="195" height="16"/>
+                            <rect key="frame" x="1" y="1" width="0.0" height="16"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="37" horizontal="NO" id="W2h-eY-K7S">
+                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="W2h-eY-K7S">
                             <rect key="frame" x="-15" y="17" width="16" height="0.0"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>

@@ -31,6 +31,7 @@ class ActiveThumbnailsController(NSWindowController):
     animationButton = objc.IBOutlet()
 
     animationView = objc.IBOutlet()
+    experienceView = objc.IBOutlet()
 
     arrayController = objc.IBOutlet()
 
@@ -52,7 +53,7 @@ class ActiveThumbnailsController(NSWindowController):
     index = 0
     animationIndex = 0
 
-    list = [{'time': '8:41', 'project': 'Selfspy'},{'time': '8:42', 'project': 'Selfspy'},{'time': '8:43', 'project': 'Selfspy'}]
+    list = []
 
     results = [ NSDictionary.dictionaryWithDictionary_(x) for x in list]
 
@@ -183,17 +184,34 @@ class ActiveThumbnailsController(NSWindowController):
         Session = sessionmaker(bind=engine)
         session = Session()
         q = session.query(Experience).all()
-        print q[1].screenshot
         return session
 
 
     def populateExperienceTable(self, session):
         q = session.query(Experience).all()
         for r in q:
+            img = r.screenshot.split('/')[-1]
             dict = {}
-            dict['time'] = r.screenshot
+            dict['time'] = img[2:4] + "/" + img[4:6] +"/"+ img[0:2] + " " +img[7:9] +":"+ img[9:11]
             dict['project'] = r.project
-            self.results.append(dict)
+            dict['screenshot'] = r.screenshot
+            self.results.append(NSDictionary.dictionaryWithDictionary_(dict))
+
+    def goToExperience_(self,sender):
+        selectedObjs = self.arrayController.selectedObjects()
+        if len(selectedObjs) == 0:
+            NSLog(u"No selected row!")
+            return
+
+        row = selectedObjs[0]
+        if not row.has_key('screenshot') or row['screenshot'] == None:
+            NSLog(u"Row has no screenshot!")
+            return
+
+        self.index = self.files.index(row['screenshot'].split('/')[-1])
+
+        self.loadImage_(self.files[self.index])
+        self.slider.setIntValue_(self.index)
 
 
     def runAnimation(self):
@@ -302,6 +320,12 @@ class ActiveThumbnailsController(NSWindowController):
             self.nextButton.setEnabled_(True)
 
 
+    def awakeFromNib(self):
+        if self.experienceView:
+            self.experienceView.setTarget_(self)
+            self.experienceView.setDoubleAction_("goToExperience:")
+
+
     def show(self):
         try:
             if self.activeController:
@@ -320,6 +344,7 @@ class ActiveThumbnailsController(NSWindowController):
         self.populateSpeedDropdown(self)
         self.session = self.createSession(self)
         self.populateExperienceTable(self, self.session)
+        self.activeController.arrayController.rearrangeObjects()
 
 
     show = classmethod(show)
