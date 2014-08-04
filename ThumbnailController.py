@@ -4,13 +4,22 @@ import Quartz.CoreGraphics as CG
 
 import os
 import datetime
+import sqlalchemy
+from sqlalchemy.orm import sessionmaker, mapper
+from sqlalchemy.dialects.sqlite.base import dialect
+
+
+class Experience(object):
+    pass
 
 
 class ActiveThumbnailsController(NSWindowController):
     mainImage = objc.IBOutlet()
     nextButton = objc.IBOutlet()
     prevButton = objc.IBOutlet()
-    animationButton = objc.IBOutlet()
+
+    slider = objc.IBOutlet()
+    label = objc.IBOutlet()
 
     extentButton = objc.IBOutlet()
     sizeDropdown = objc.IBOutlet()
@@ -19,9 +28,12 @@ class ActiveThumbnailsController(NSWindowController):
     animationSpeedDropdown = objc.IBOutlet()
     animationSpanDropdown = objc.IBOutlet()
     animationAdjacencyDropdown = objc.IBOutlet()
+    animationButton = objc.IBOutlet()
 
-    slider = objc.IBOutlet()
-    label = objc.IBOutlet()
+    animationView = objc.IBOutlet()
+
+    arrayController = objc.IBOutlet()
+
 
     image = True
     snippet = True
@@ -40,6 +52,9 @@ class ActiveThumbnailsController(NSWindowController):
     index = 0
     animationIndex = 0
 
+    list = [{'time': '8:41', 'project': 'Selfspy'},{'time': '8:42', 'project': 'Selfspy'},{'time': '8:43', 'project': 'Selfspy'}]
+
+    results = [ NSDictionary.dictionaryWithDictionary_(x) for x in list]
 
     def windowDidLoad(self):
         NSWindowController.windowDidLoad(self)
@@ -52,6 +67,14 @@ class ActiveThumbnailsController(NSWindowController):
         self.slider.setIntValue_(len(self.files)-1)
 
         NSLog("Active Thumbnails has finished loading.")
+
+
+    @objc.IBAction
+    def changeThumbnailType_(self, notification):
+        if(notification.selectedSegment() == 1):
+            self.animationView.setHidden_(False)
+        else:
+            self.animationView.setHidden_(True)
 
 
     @objc.IBAction
@@ -95,6 +118,25 @@ class ActiveThumbnailsController(NSWindowController):
         self.animationAdjacency = self.activeController.animationAdjacencyDropdown.selectedItem().tag()
 
 
+    @objc.IBAction
+    def nextImage_(self,sender):
+        self.index += 1
+        self.slider.setIntValue_(self.index)
+        self.loadImage_(self.files[self.index])
+
+
+    @objc.IBAction
+    def prevImage_(self,sender):
+        self.index -= 1
+        self.slider.setIntValue_(self.index)
+        self.loadImage_(self.files[self.index])
+
+    @objc.IBAction
+    def slide_(self, sender):
+        self.index = self.slider.intValue()
+        self.loadImage_(self.files[self.index])
+
+
     def populateSizeDropdown(self):
         sizes = []
         for s in range(30):
@@ -128,6 +170,30 @@ class ActiveThumbnailsController(NSWindowController):
             self.activeController.animationSpeedDropdown.selectItemWithTag_(5)
         except:
             print("Could not select default size dropdown item")
+
+
+    def createSession(self):
+        dbPath = os.path.expanduser('~/.selfspy/selfspy.sqlite')
+        engine = sqlalchemy.create_engine('sqlite:///%s' % dbPath)
+
+        metadata = sqlalchemy.MetaData(engine)
+        experience = sqlalchemy.Table('experience', metadata, autoload=True)
+        mapper(Experience, experience)
+
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        q = session.query(Experience).all()
+        print q[1].screenshot
+        return session
+
+
+    def populateExperienceTable(self, session):
+        q = session.query(Experience).all()
+        for r in q:
+            dict = {}
+            dict['time'] = r.screenshot
+            dict['project'] = r.project
+            self.results.append(dict)
 
 
     def runAnimation(self):
@@ -223,7 +289,7 @@ class ActiveThumbnailsController(NSWindowController):
         targetImage.unlockFocus()
 
         self.mainImage.setImage_(targetImage)
-        self.label.setStringValue_(img[2:4] + "/" + img[0:2] +"/"+ img[4:6] + " " +img[7:9] +":"+ img[9:11] +"."+ img[11:13])
+        self.label.setStringValue_(img[2:4] + "/" + img[4:6] +"/"+ img[0:2] + " " +img[7:9] +":"+ img[9:11] +"."+ img[11:13])
 
         if self.index == 0:
             self.prevButton.setEnabled_(False)
@@ -234,25 +300,6 @@ class ActiveThumbnailsController(NSWindowController):
             self.nextButton.setEnabled_(False)
         else:
             self.nextButton.setEnabled_(True)
-
-
-    @objc.IBAction
-    def nextImage_(self,sender):
-        self.index += 1
-        self.slider.setIntValue_(self.index)
-        self.loadImage_(self.files[self.index])
-
-
-    @objc.IBAction
-    def prevImage_(self,sender):
-        self.index -= 1
-        self.slider.setIntValue_(self.index)
-        self.loadImage_(self.files[self.index])
-
-    @objc.IBAction
-    def slide_(self, sender):
-        self.index = self.slider.intValue()
-        self.loadImage_(self.files[self.index])
 
 
     def show(self):
@@ -271,6 +318,8 @@ class ActiveThumbnailsController(NSWindowController):
 
         self.populateSizeDropdown(self)
         self.populateSpeedDropdown(self)
+        self.session = self.createSession(self)
+        self.populateExperienceTable(self, self.session)
 
 
     show = classmethod(show)
