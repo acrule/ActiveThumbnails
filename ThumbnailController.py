@@ -3,18 +3,18 @@ from Cocoa import *
 import Quartz.CoreGraphics as CG
 
 import os
+import time
 import datetime
+import string
+
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker, mapper, join
 from sqlalchemy.dialects.sqlite.base import dialect
 
+import models
+from models import Experience, Debrief, Cue
 
-class Experience(object):
-    pass
-
-
-class Debrief(object):
-    pass
+import mutagen.mp4
 
 
 class ActiveThumbnailsController(NSWindowController):
@@ -28,16 +28,35 @@ class ActiveThumbnailsController(NSWindowController):
     extentDropdown = objc.IBOutlet()
     sizeDropdown = objc.IBOutlet()
 
+    cueTypeDropdown = objc.IBOutlet()
     animationTypeDropdown = objc.IBOutlet()
     animationSpeedDropdown = objc.IBOutlet()
     animationSpanDropdown = objc.IBOutlet()
     animationAdjacencyDropdown = objc.IBOutlet()
     animationButton = objc.IBOutlet()
 
+    recordButton = objc.IBOutlet()
+    existAudioText = objc.IBOutlet()
+    playAudioButton = objc.IBOutlet()
+    deleteAudioButton = objc.IBOutlet()
+
+    recordingAudio = False
+    playingAudio = False
+    audio_file = ''
+
     animationView = objc.IBOutlet()
     experienceView = objc.IBOutlet()
 
     arrayController = objc.IBOutlet()
+
+    # images for audio recording button
+    recordImage = NSImage.alloc().initByReferencingFile_('../Resources/record.png')
+    recordImage.setScalesWhenResized_(True)
+    recordImage.setSize_((11, 11))
+
+    stopImage = NSImage.alloc().initByReferencingFile_('../Resources/stop.png')
+    stopImage.setScalesWhenResized_(True)
+    stopImage.setSize_((11, 11))
 
 
     image = True
@@ -74,10 +93,31 @@ class ActiveThumbnailsController(NSWindowController):
 
         NSLog("Active Thumbnails has finished loading.")
 
+    def trycommit(self):
+        self.last_commit = time.time()
+        for _ in xrange(1000):
+            try:
+                self.session.commit()
+                break
+            except sqlalchemy.exc.OperationalError:
+                print "Database operational error. Your storage device may be full."
+                self.session.rollback()
+
+                alert = NSAlert.alloc().init()
+                alert.addButtonWithTitle_("OK")
+                alert.setMessageText_("Database operational error. Your storage device may be full.")
+                alert.setAlertStyle_(NSWarningAlertStyle)
+                alert.runModal()
+
+                break
+            except:
+                print "Rollback"
+                self.session.rollback()
+
 
     @objc.IBAction
     def changeThumbnailType_(self, notification):
-        if(notification.selectedSegment() == 1):
+        if(notification.selectedItem().tag() == 1):
             self.animationView.setHidden_(False)
         else:
             self.animationView.setHidden_(True)
@@ -85,7 +125,7 @@ class ActiveThumbnailsController(NSWindowController):
 
     @objc.IBAction
     def changeExtent_(self, notification):
-        self.extent = notification.selectedSegment()
+        self.extent = notification.selectedItem().tag()
         self.loadImage_(self.files[self.index])
 
 
@@ -99,7 +139,7 @@ class ActiveThumbnailsController(NSWindowController):
 
     @objc.IBAction
     def changeAnimationType_(self, notification):
-        if(notification.selectedSegment() == 1):
+        if(notification.selectedItem().tag() == 1):
             self.animationRelative = False
         else:
             self.animationRelative = True
@@ -146,7 +186,7 @@ class ActiveThumbnailsController(NSWindowController):
             sizes.append((s + 1) * 20)
 
         for s in sizes:
-            menuitem = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(str(s) + ' x ' +str(int(s * self.screenR)) , '', '')
+            menuitem = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(str(s) + ' px ' , '', '')
             menuitem.setTag_(s)
             self.activeController.sizeDropdown.menu().addItem_(menuitem)
         try:
@@ -178,16 +218,15 @@ class ActiveThumbnailsController(NSWindowController):
     def createSession(self):
         dbPath = os.path.expanduser('~/.selfspy/selfspy.sqlite')
         engine = sqlalchemy.create_engine('sqlite:///%s' % dbPath)
+        models.Base.metadata.create_all(engine)
 
-        metadata = sqlalchemy.MetaData(engine)
-        experience = sqlalchemy.Table('experience', metadata, autoload=True)
-        mapper(Experience, experience)
-        debrief = sqlalchemy.Table('debrief', metadata, autoload=True)
-        mapper(Debrief, debrief)
+        # metadata = sqlalchemy.MetaData(engine)
+        # experience = sqlalchemy.Table('experience', metadata, autoload=True)
+        # mapper(Experience, experience)
+        # debrief = sqlalchemy.Table('debrief', metadata, autoload=True)
+        # mapper(Debrief, debrief)
 
-        Session = sessionmaker(bind=engine)
-        session = Session()
-        return session
+        return sessionmaker(bind=engine)
 
 
     def populateExperienceTable(self, session):
@@ -308,10 +347,12 @@ class ActiveThumbnailsController(NSWindowController):
         elif(self.extent == 1):
             fromRect = CG.CGRectMake(x - self.w/2*recordToDisplay, y- self.h/2*recordToDisplay, self.w*recordToDisplay, self.h*recordToDisplay)
             toRect = CG.CGRectMake(0.0, 0.0, self.w, self.h)
-        else:
+        elif(self.extent == 2):
             targetImage = NSImage.alloc().initWithSize_(NSMakeSize(960.0, 600.0))
             fromRect = CG.CGRectMake(x - self.w/2*recordToDisplay, y - self.h/2*recordToDisplay, self.w*recordToDisplay, self.h*recordToDisplay)
             toRect = CG.CGRectMake(x/recordToDisplay - self.w/2, y/recordToDisplay- self.h/2, self.w, self.h)
+        else:
+            x = 1
 
         targetImage.lockFocus()
         experienceImage.drawInRect_fromRect_operation_fraction_( toRect, fromRect, NSCompositeCopy, 1.0 )
@@ -319,6 +360,20 @@ class ActiveThumbnailsController(NSWindowController):
 
         self.mainImage.setImage_(targetImage)
         self.label.setStringValue_(img[2:4] + "/" + img[4:6] +"/"+ img[0:2] + " " +img[7:9] +":"+ img[9:11] +":"+ img[11:13])
+
+        audioFiles = os.listdir(os.path.expanduser('~/.selfspy/audio'))
+        audioName = self.files[self.index][:-4] + '-week.m4a'
+        if (audioName in audioFiles):
+            self.audio_file = audioName
+            self.activeController.recordButton.setEnabled_(False)
+            self.activeController.existAudioText.setStringValue_("You've recorded an answer:")
+            self.activeController.playAudioButton.setHidden_(False)
+            self.activeController.deleteAudioButton.setHidden_(False)
+        else:
+            self.activeController.recordButton.setEnabled_(True)
+            self.activeController.existAudioText.setStringValue_("Record your answer here:")
+            self.activeController.playAudioButton.setHidden_(True)
+            self.activeController.deleteAudioButton.setHidden_(True)
 
         if self.index == 0:
             self.prevButton.setEnabled_(False)
@@ -329,6 +384,99 @@ class ActiveThumbnailsController(NSWindowController):
             self.nextButton.setEnabled_(False)
         else:
             self.nextButton.setEnabled_(True)
+
+    @objc.IBAction
+    def toggleAudioPlay_(self, sender):
+        if self.playingAudio:
+            self.playingAudio = False
+            s = NSAppleScript.alloc().initWithSource_("tell application \"QuickTime Player\" \n stop the front document \n close the front document \n end tell")
+            s.executeAndReturnError_(None)
+
+            self.activeController.playAudioButton.setTitle_("Play Audio")
+
+        else:
+            self.playingAudio = True
+
+            audio = mutagen.mp4.MP4(self.audio_file)
+            length = audio.info.length
+
+            s = NSAppleScript.alloc().initWithSource_("set filePath to POSIX file \"" + self.audio_file + "\" \n tell application \"QuickTime Player\" \n open filePath \n tell application \"System Events\" \n set visible of process \"QuickTime Player\" to false \n repeat until visible of process \"QuickTime Player\" is false \n end repeat \n end tell \n play the front document \n end tell")
+            s.executeAndReturnError_(None)
+
+            s = objc.selector(self.stopAudioPlay,signature='v@:')
+            self.exp_time = NSUserDefaultsController.sharedUserDefaultsController().values().valueForKey_('experienceTime')
+            self.experienceTimer = NSTimer.scheduledTimerWithTimeInterval_target_selector_userInfo_repeats_(length, self, s, None, False)
+
+            self.activeController.playAudioButton.setTitle_("Stop Audio")
+
+    def stopAudioPlay(self):
+        self.playingAudio = False
+        s = NSAppleScript.alloc().initWithSource_("tell application \"QuickTime Player\" \n stop the front document \n close the front document \n end tell")
+        s.executeAndReturnError_(None)
+
+        self.activeController.playAudioButton.setTitle_("Play Audio")
+
+    @objc.IBAction
+    def deleteAudio_(self, sender):
+        controller = self.activeController
+
+        if (self.audio_file != '') & (self.audio_file != None) :
+            if os.path.exists(self.audio_file):
+                os.remove(self.audio_file)
+        self.audio_file = ''
+
+        controller.recordButton.setEnabled_(True)
+        controller.existAudioText.setStringValue_("Record your answer here:")
+        controller.playAudioButton.setHidden_(True)
+        controller.deleteAudioButton.setHidden_(True)
+
+    @objc.IBAction
+    def toggleAudioRecording_(self, sender):
+        controller = self.activeController
+
+        if self.recordingAudio:
+            self.recordingAudio = False
+
+            print "Stop Audio recording"
+            # seems to miss reading the name sometimes
+            imageName = str(self.files[self.index])[0:-4]
+
+            if (imageName == None) | (imageName == ''):
+                imageName = datetime.now().strftime("%y%m%d-%H%M%S%f") + '-audio'
+            imageName = str(os.path.join(os.path.expanduser('~/.selfspy'), "audio/")) + imageName + '-week.m4a'
+            self.audio_file = imageName
+            imageName = string.replace(imageName, "/", ":")
+            imageName = imageName[1:]
+
+            s = NSAppleScript.alloc().initWithSource_("set filePath to \"" + imageName + "\" \n set placetosaveFile to a reference to file filePath \n tell application \"QuickTime Player\" \n set mydocument to document 1 \n tell document 1 \n stop \n end tell \n set newRecordingDoc to first document whose name = \"untitled\" \n export newRecordingDoc in placetosaveFile using settings preset \"Audio Only\" \n close newRecordingDoc without saving \n quit \n end tell")
+            s.executeAndReturnError_(None)
+
+            size = self.activeController.sizeDropdown.selectedItem().tag()
+            extent = self.activeController.extentDropdown.titleOfSelectedItem()
+            cue_type = self.activeController.cueTypeDropdown.titleOfSelectedItem()
+            span = self.activeController.animationSpanDropdown.selectedItem().tag()
+            adjacency = self.activeController.animationAdjacencyDropdown.titleOfSelectedItem()
+            animation_type = self.activeController.animationTypeDropdown.titleOfSelectedItem()
+            speed = self.activeController.animationSpeedDropdown.selectedItem().tag()
+
+            self.session.add(Cue(size, extent, cue_type, span, adjacency, animation_type, speed, self.audio_file))
+            self.trycommit()
+
+            controller.recordButton.setImage_(self.recordImage)
+
+            controller.recordButton.setEnabled_(False)
+            controller.existAudioText.setStringValue_("You've recorded an answer:")
+            controller.playAudioButton.setHidden_(False)
+            controller.deleteAudioButton.setHidden_(False)
+
+        else:
+            self.recordingAudio = True
+
+            print "Start Audio Recording"
+            s = NSAppleScript.alloc().initWithSource_("tell application \"QuickTime Player\" \n set new_recording to (new audio recording) \n tell new_recording \n start \n end tell \n tell application \"System Events\" \n set visible of process \"QuickTime Player\" to false \n repeat until visible of process \"QuickTime Player\" is false \n end repeat \n end tell \n end tell")
+            s.executeAndReturnError_(None)
+
+            self.activeController.recordButton.setImage_(self.stopImage)
 
 
     def awakeFromNib(self):
@@ -353,7 +501,8 @@ class ActiveThumbnailsController(NSWindowController):
 
         self.populateSizeDropdown(self)
         self.populateSpeedDropdown(self)
-        self.session = self.createSession(self)
+        self.session_maker = self.createSession(self)
+        self.session = self.session_maker()
         self.populateExperienceTable(self, self.session)
 
         desc = NSSortDescriptor.alloc().initWithKey_ascending_('time',False)
