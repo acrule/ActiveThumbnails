@@ -5,11 +5,15 @@ import Quartz.CoreGraphics as CG
 import os
 import datetime
 import sqlalchemy
-from sqlalchemy.orm import sessionmaker, mapper
+from sqlalchemy.orm import sessionmaker, mapper, join
 from sqlalchemy.dialects.sqlite.base import dialect
 
 
 class Experience(object):
+    pass
+
+
+class Debrief(object):
     pass
 
 
@@ -21,10 +25,10 @@ class ActiveThumbnailsController(NSWindowController):
     slider = objc.IBOutlet()
     label = objc.IBOutlet()
 
-    extentButton = objc.IBOutlet()
+    extentDropdown = objc.IBOutlet()
     sizeDropdown = objc.IBOutlet()
 
-    animationTypeButton = objc.IBOutlet()
+    animationTypeDropdown = objc.IBOutlet()
     animationSpeedDropdown = objc.IBOutlet()
     animationSpanDropdown = objc.IBOutlet()
     animationAdjacencyDropdown = objc.IBOutlet()
@@ -38,6 +42,7 @@ class ActiveThumbnailsController(NSWindowController):
 
     image = True
     snippet = True
+    extent = 0
 
     screenH = NSScreen.mainScreen().frame().size.height
     screenW = NSScreen.mainScreen().frame().size.width
@@ -45,7 +50,7 @@ class ActiveThumbnailsController(NSWindowController):
     h = 200
     w = 200 * screenR
 
-    animationRelative = False
+    animationRelative = True
     animationSpan = 60
     animationAdjacency = -1
     animationSpeed = 5
@@ -80,10 +85,7 @@ class ActiveThumbnailsController(NSWindowController):
 
     @objc.IBAction
     def changeExtent_(self, notification):
-        if(notification.selectedSegment() == 1):
-            self.snippet = True
-        else:
-            self.snippet = False
+        self.extent = notification.selectedSegment()
         self.loadImage_(self.files[self.index])
 
 
@@ -162,7 +164,7 @@ class ActiveThumbnailsController(NSWindowController):
 
         self.activeController.animationSpeedDropdown.menu().removeAllItems()
 
-        speeds = [1,2,5,10,15,30]
+        speeds = [1,2,5,10,15,30,60]
         for s in speeds:
             menuitem = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(str(s) + tag , '', '')
             menuitem.setTag_(s)
@@ -180,21 +182,24 @@ class ActiveThumbnailsController(NSWindowController):
         metadata = sqlalchemy.MetaData(engine)
         experience = sqlalchemy.Table('experience', metadata, autoload=True)
         mapper(Experience, experience)
+        debrief = sqlalchemy.Table('debrief', metadata, autoload=True)
+        mapper(Debrief, debrief)
 
         Session = sessionmaker(bind=engine)
         session = Session()
-        q = session.query(Experience).all()
         return session
 
 
     def populateExperienceTable(self, session):
-        q = session.query(Experience).all()
+        q = session.query(Debrief, Experience).join(Experience, Experience.id==Debrief.experience_id).all()
+        # query to just get experience sample
+        # q = session.query(Experience).all()
         for r in q:
-            img = r.screenshot.split('/')[-1]
+            img = r.Experience.screenshot.split('/')[-1]
             dict = {}
             dict['time'] = img[2:4] + "/" + img[4:6] +"/"+ img[0:2] + " " +img[7:9] +":"+ img[9:11]
-            dict['project'] = r.project
-            dict['screenshot'] = r.screenshot
+            dict['project'] = r.Experience.project
+            dict['screenshot'] = r.Experience.screenshot
             self.results.append(NSDictionary.dictionaryWithDictionary_(dict))
 
     def goToExperience_(self,sender):
@@ -288,26 +293,32 @@ class ActiveThumbnailsController(NSWindowController):
         path = os.path.expanduser(path)
         experienceImage = NSImage.alloc().initByReferencingFile_(path)
 
-        scaleFactor = experienceImage.size().height / self.screenH
+        recordToNative = experienceImage.size().height / self.screenH
+        recordToDisplay = experienceImage.size().height / 600.0
+        dispalyToNative = 600.0 / self.screenH
 
-        x = float(path.split("_")[-2]) * scaleFactor
-        y = float(path.split("_")[-1].split('-')[0].split('.')[0]) * scaleFactor
+        x = float(path.split("_")[-2]) * recordToNative
+        y = float(path.split("_")[-1].split('-')[0].split('.')[0]) * recordToNative
 
         targetImage = NSImage.alloc().initWithSize_(NSMakeSize(self.w, self.h))
 
-        if(self.snippet):
-            fromRect = CG.CGRectMake(x - self.w/2, y- self.h/2, self.w, self.h)
-        else:
+        if(self.extent == 0):
             fromRect = CG.CGRectMake(0.0, 0.0, experienceImage.size().width, experienceImage.size().height)
-
-        toRect = CG.CGRectMake(0.0, 0.0, self.w, self.h)
+            toRect = CG.CGRectMake(0.0, 0.0, self.w, self.h)
+        elif(self.extent == 1):
+            fromRect = CG.CGRectMake(x - self.w/2*recordToDisplay, y- self.h/2*recordToDisplay, self.w*recordToDisplay, self.h*recordToDisplay)
+            toRect = CG.CGRectMake(0.0, 0.0, self.w, self.h)
+        else:
+            targetImage = NSImage.alloc().initWithSize_(NSMakeSize(960.0, 600.0))
+            fromRect = CG.CGRectMake(x - self.w/2*recordToDisplay, y - self.h/2*recordToDisplay, self.w*recordToDisplay, self.h*recordToDisplay)
+            toRect = CG.CGRectMake(x/recordToDisplay - self.w/2, y/recordToDisplay- self.h/2, self.w, self.h)
 
         targetImage.lockFocus()
         experienceImage.drawInRect_fromRect_operation_fraction_( toRect, fromRect, NSCompositeCopy, 1.0 )
         targetImage.unlockFocus()
 
         self.mainImage.setImage_(targetImage)
-        self.label.setStringValue_(img[2:4] + "/" + img[4:6] +"/"+ img[0:2] + " " +img[7:9] +":"+ img[9:11] +"."+ img[11:13])
+        self.label.setStringValue_(img[2:4] + "/" + img[4:6] +"/"+ img[0:2] + " " +img[7:9] +":"+ img[9:11] +":"+ img[11:13])
 
         if self.index == 0:
             self.prevButton.setEnabled_(False)
@@ -344,6 +355,10 @@ class ActiveThumbnailsController(NSWindowController):
         self.populateSpeedDropdown(self)
         self.session = self.createSession(self)
         self.populateExperienceTable(self, self.session)
+
+        desc = NSSortDescriptor.alloc().initWithKey_ascending_('time',False)
+        descriptiorArray = [desc]
+        self.activeController.arrayController.setSortDescriptors_(descriptiorArray)
         self.activeController.arrayController.rearrangeObjects()
 
 

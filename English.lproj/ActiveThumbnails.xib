@@ -6,8 +6,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ActiveThumbnailsController">
             <connections>
-                <outlet property="animationAdjacencyDropdown" destination="myr-K1-MKd" id="DGh-wp-i4C"/>
-                <outlet property="animationButton" destination="Eb9-Ss-LwA" id="Lcy-0t-zBT"/>
+                <outlet property="animationAdjacencyDropdown" destination="cEx-AK-y2A" id="DFj-hG-yDC"/>
+                <outlet property="animationButton" destination="vLd-Hw-YqP" id="e92-U1-l3V"/>
                 <outlet property="animationSpanDropdown" destination="5Vo-TZ-Iy6" id="1SZ-OI-aPK"/>
                 <outlet property="animationSpeedDropdown" destination="y4L-Jg-94H" id="8XE-Gf-G3N"/>
                 <outlet property="animationTypeButton" destination="377-iT-a29" id="3h3-ag-6ic"/>
@@ -16,11 +16,12 @@
                 <outlet property="exp" destination="6HW-9N-WUX" id="7dm-bs-0DV"/>
                 <outlet property="experienceView" destination="3ZF-3U-coc" id="ovB-fa-vb4"/>
                 <outlet property="extentButton" destination="hk1-Cu-VVN" id="C7T-19-7dm"/>
+                <outlet property="extentDropdown" destination="zk3-d0-WbW" id="3FT-Ss-fKM"/>
                 <outlet property="label" destination="lIN-dI-qeQ" id="sLv-qk-bBK"/>
                 <outlet property="mainImage" destination="yoV-iE-un6" id="Cqq-2u-ecd"/>
                 <outlet property="nextButton" destination="vTe-C6-lKU" id="JoM-fy-XSG"/>
                 <outlet property="prevButton" destination="C9y-dD-wMB" id="0ei-Mp-exO"/>
-                <outlet property="sizeDropdown" destination="3iV-9o-cOy" id="Ns0-fs-lTm"/>
+                <outlet property="sizeDropdown" destination="tDF-0M-AZf" id="oGY-si-NE0"/>
                 <outlet property="slider" destination="tnl-jH-cwx" id="Gkf-bt-ltf"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="jA0-tD-njR"/>
             </connections>
@@ -63,13 +64,13 @@
                         </connections>
                     </button>
                     <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xPc-gU-bWV">
-                        <rect key="frame" x="32" y="610" width="187" height="24"/>
+                        <rect key="frame" x="32" y="54" width="187" height="24"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <segmentedCell key="cell" alignment="left" style="rounded" trackingMode="selectOne" id="4iv-dP-3Fm">
                             <font key="font" metaFont="system"/>
                             <segments>
-                                <segment label="Image" width="91"/>
-                                <segment label="Animation" width="89" selected="YES" tag="1"/>
+                                <segment label="Image" width="91" selected="YES"/>
+                                <segment label="Animation" width="89" tag="1"/>
                             </segments>
                         </segmentedCell>
                         <connections>
@@ -82,8 +83,9 @@
                         <segmentedCell key="cell" alignment="left" style="rounded" trackingMode="selectOne" id="Nyq-6R-VoJ">
                             <font key="font" metaFont="system"/>
                             <segments>
-                                <segment label="Full" width="91" tag="1"/>
-                                <segment label="Snippet" width="89" selected="YES" tag="1"/>
+                                <segment label="Full" width="62" selected="YES"/>
+                                <segment label="Snippet" width="60" tag="1"/>
+                                <segment label="Portal" tag="2"/>
                             </segments>
                             <connections>
                                 <action selector="changeExtent:" target="-2" id="ydI-iH-LK0"/>
@@ -91,7 +93,7 @@
                         </segmentedCell>
                     </segmentedControl>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oTt-59-8DW">
-                        <rect key="frame" x="20" y="641" width="63" height="17"/>
+                        <rect key="frame" x="20" y="85" width="63" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Cue" id="NSI-FI-FYz">
                             <font key="font" metaFont="systemBold"/>
@@ -108,8 +110,26 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZJY-YQ-eR7">
+                        <rect key="frame" x="118" y="607" width="17" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="of" id="Hfh-Ji-MKW">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MOe-et-lg2">
+                        <rect key="frame" x="127" y="576" width="17" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="at" id="v3N-Fr-iC0">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7jb-ec-vby">
-                        <rect key="frame" x="18" y="570" width="105" height="17"/>
+                        <rect key="frame" x="20" y="20" width="105" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Image Settings" id="52y-uz-hg9">
                             <font key="font" metaFont="systemBold"/>
@@ -118,9 +138,9 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lbl-pY-95g">
-                        <rect key="frame" x="20" y="172" width="138" height="17"/>
+                        <rect key="frame" x="20" y="172" width="115" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Experience Samples" id="Zbl-JC-8F6">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Debrief Samples" id="Zbl-JC-8F6">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -164,7 +184,7 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LkR-nn-NYh">
+                    <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LkR-nn-NYh">
                         <rect key="frame" x="0.0" y="197" width="237" height="260"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
@@ -216,12 +236,12 @@
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Vo-TZ-Iy6">
                                 <rect key="frame" x="32" y="58" width="78" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <popUpButtonCell key="cell" type="push" title="1 min" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="60" imageScaling="proportionallyDown" inset="2" selectedItem="j9h-ej-fvQ" id="xcr-Zc-ed8">
+                                <popUpButtonCell key="cell" type="push" title="5 s" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="5" imageScaling="proportionallyDown" inset="2" selectedItem="uCX-Ja-pgS" id="xcr-Zc-ed8">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" title="OtherViews" id="JHx-ca-lSa">
                                         <items>
-                                            <menuItem title="5 s" tag="5" id="uCX-Ja-pgS"/>
+                                            <menuItem title="5 s" state="on" tag="5" id="uCX-Ja-pgS"/>
                                             <menuItem title="15 s" tag="15" id="2yi-Eq-vli"/>
                                             <menuItem title="30 s" tag="30" id="YXx-j9-GQo"/>
                                             <menuItem title="1 min" state="on" tag="60" id="j9h-ej-fvQ">
@@ -240,6 +260,15 @@
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
                                             <menuItem title="1 hr" tag="3600" id="XV5-ol-Cp7">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="2 hr" tag="7200" id="9T2-NC-bzr">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="4 hr" tag="14400" id="Ipu-na-2dF">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="8 hr" tag="28800" id="5Fq-Wj-HUd">
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
                                         </items>
@@ -278,8 +307,8 @@
                                 <segmentedCell key="cell" alignment="left" style="rounded" trackingMode="selectOne" id="7on-eu-QrN">
                                     <font key="font" metaFont="system"/>
                                     <segments>
-                                        <segment label="Relative" width="90"/>
-                                        <segment label="fps" width="90" selected="YES" tag="1"/>
+                                        <segment label="Relative" width="90" selected="YES"/>
+                                        <segment label="fps" width="90" tag="1"/>
                                     </segments>
                                     <connections>
                                         <action selector="changeAnimationType:" target="-2" id="H9u-RT-pKj"/>
@@ -298,14 +327,14 @@
                         </subviews>
                     </customView>
                     <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6HW-9N-WUX">
-                        <rect key="frame" x="20" y="15" width="197" height="149"/>
+                        <rect key="frame" x="20" y="117" width="197" height="47"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <clipView key="contentView" ambiguous="YES" misplaced="YES" id="dYl-SD-qXl">
-                            <rect key="frame" x="1" y="17" width="195" height="131"/>
+                            <rect key="frame" x="1" y="17" width="195" height="29"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="ogj-hq-MT5" id="3ZF-3U-coc">
-                                    <rect key="frame" x="0.0" y="0.0" width="195" height="131"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="195" height="29"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -361,6 +390,113 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
+                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ji8-46-cg1">
+                        <rect key="frame" x="18" y="634" width="75" height="26"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="D07-gf-gjp">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <menu key="menu" title="OtherViews" id="tDF-0M-AZf"/>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bgM-Aw-hkf">
+                        <rect key="frame" x="148" y="573" width="72" height="26"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="m2r-Yf-d3m">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <menu key="menu" title="OtherViews" id="z3q-qH-Pwm"/>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zk3-d0-WbW">
+                        <rect key="frame" x="96" y="634" width="124" height="26"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <popUpButtonCell key="cell" type="push" title="snippet" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="cgS-JN-17q" id="ye6-Lp-c4B">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <menu key="menu" title="OtherViews" id="tBI-qd-HEG">
+                                <items>
+                                    <menuItem title="snippet" state="on" id="cgS-JN-17q"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IsN-08-QkU">
+                        <rect key="frame" x="18" y="604" width="97" height="26"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <popUpButtonCell key="cell" type="push" title="animation" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="zzc-XT-Dq7" id="keD-jk-hJb">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <menu key="menu" title="OtherViews" id="ioD-1X-5Hn">
+                                <items>
+                                    <menuItem title="animation" state="on" id="zzc-XT-Dq7"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cEx-AK-y2A">
+                        <rect key="frame" x="18" y="573" width="108" height="26"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <popUpButtonCell key="cell" type="push" title="around now" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="QDq-Ba-UPX" id="0BG-Sw-Zn7">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <menu key="menu" title="OtherViews" id="css-z6-y3n">
+                                <items>
+                                    <menuItem title="around now" state="on" id="QDq-Ba-UPX"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dje-56-TSY">
+                        <rect key="frame" x="139" y="602" width="81" height="26"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <popUpButtonCell key="cell" type="push" title="8 hr" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="28800" imageScaling="proportionallyDown" inset="2" selectedItem="eoL-Hy-kiD" id="qbG-pX-tAk">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <menu key="menu" title="OtherViews" id="WYR-G6-10N">
+                                <items>
+                                    <menuItem title="5 s" tag="5" id="cLE-fN-uXj"/>
+                                    <menuItem title="15 s" tag="15" id="knG-g2-wey"/>
+                                    <menuItem title="30 s" tag="30" id="hLl-Ol-bG7"/>
+                                    <menuItem title="1 min" state="on" tag="60" id="hh1-Gg-jX0">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="2 min" tag="120" id="J1M-mj-hxI">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="5 min" tag="300" id="Zwh-UY-4zY">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="15 min" tag="900" id="FiA-We-L1c">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="30 min" tag="1800" id="wZo-Jl-uEz">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="1 hr" tag="3600" id="ekc-yk-dvM">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="2 hr" tag="7200" id="y2G-Va-whK">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="4 hr" state="on" tag="14400" id="xL3-JK-1MW">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="8 hr" state="on" tag="28800" id="eoL-Hy-kiD">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vLd-Hw-YqP">
+                        <rect key="frame" x="154" y="538" width="69" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Play " bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KkS-fu-BAJ">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
                 </subviews>
             </view>
         </window>
