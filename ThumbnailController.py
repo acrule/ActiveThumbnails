@@ -397,10 +397,12 @@ class ActiveThumbnailsController(NSWindowController):
         else:
             self.playingAudio = True
 
-            audio = mutagen.mp4.MP4(self.audio_file)
+            file = os.path.join(os.path.expanduser('~/.selfspy/audio'), self.audio_file)
+
+            audio = mutagen.mp4.MP4(file)
             length = audio.info.length
 
-            s = NSAppleScript.alloc().initWithSource_("set filePath to POSIX file \"" + self.audio_file + "\" \n tell application \"QuickTime Player\" \n open filePath \n tell application \"System Events\" \n set visible of process \"QuickTime Player\" to false \n repeat until visible of process \"QuickTime Player\" is false \n end repeat \n end tell \n play the front document \n end tell")
+            s = NSAppleScript.alloc().initWithSource_("set filePath to POSIX file \"" + file + "\" \n tell application \"QuickTime Player\" \n open filePath \n tell application \"System Events\" \n set visible of process \"QuickTime Player\" to false \n repeat until visible of process \"QuickTime Player\" is false \n end repeat \n end tell \n play the front document \n end tell")
             s.executeAndReturnError_(None)
 
             s = objc.selector(self.stopAudioPlay,signature='v@:')
