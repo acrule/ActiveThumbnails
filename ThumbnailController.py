@@ -351,6 +351,18 @@ class ActiveThumbnailsController(NSWindowController):
             targetImage = NSImage.alloc().initWithSize_(NSMakeSize(960.0, 600.0))
             fromRect = CG.CGRectMake(x - self.w/2*recordToDisplay, y - self.h/2*recordToDisplay, self.w*recordToDisplay, self.h*recordToDisplay)
             toRect = CG.CGRectMake(x/recordToDisplay - self.w/2, y/recordToDisplay- self.h/2, self.w, self.h)
+        elif(self.extent == 3):
+            targetImage = NSImage.alloc().initWithSize_(NSMakeSize(960.0, 600.0))
+
+            fromRect = CG.CGRectMake(0.0, 0.0, experienceImage.size().width, experienceImage.size().height)
+            toRect = CG.CGRectMake(0.0, 0.0, 960, 600)
+            targetImage.lockFocus()
+            experienceImage.drawInRect_fromRect_operation_fraction_( toRect, fromRect, NSCompositeCopy, 0.4 )
+            targetImage.unlockFocus()
+
+
+            fromRect = CG.CGRectMake(x - self.w/2*recordToDisplay, y - self.h/2*recordToDisplay, self.w*recordToDisplay, self.h*recordToDisplay)
+            toRect = CG.CGRectMake(x/recordToDisplay - self.w/2, y/recordToDisplay- self.h/2, self.w, self.h)
         else:
             x = 1
 

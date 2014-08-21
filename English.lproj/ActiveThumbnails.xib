@@ -180,16 +180,19 @@
                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zk3-d0-WbW">
                         <rect key="frame" x="96" y="609" width="124" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <popUpButtonCell key="cell" type="push" title="full" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="XFJ-wu-obM" id="ye6-Lp-c4B">
+                        <popUpButtonCell key="cell" type="push" title="focus" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" tag="3" imageScaling="proportionallyDown" inset="2" selectedItem="Jgs-oG-CAc" id="ye6-Lp-c4B">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
                             <menu key="menu" title="OtherViews" id="tBI-qd-HEG">
                                 <items>
-                                    <menuItem title="full" state="on" id="XFJ-wu-obM">
+                                    <menuItem title="full" id="XFJ-wu-obM">
                                         <modifierMask key="keyEquivalentModifierMask"/>
                                     </menuItem>
                                     <menuItem title="snippet" tag="1" id="cgS-JN-17q"/>
                                     <menuItem title="portal" tag="2" id="JpT-o2-Fqj">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
+                                    <menuItem title="focus" tag="3" id="Jgs-oG-CAc">
                                         <modifierMask key="keyEquivalentModifierMask"/>
                                     </menuItem>
                                 </items>
@@ -225,7 +228,7 @@
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dje-56-TSY">
                                 <rect key="frame" x="139" y="99" width="81" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <popUpButtonCell key="cell" type="push" title="8 hr" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" tag="28800" imageScaling="proportionallyDown" inset="2" selectedItem="eoL-Hy-kiD" id="qbG-pX-tAk">
+                                <popUpButtonCell key="cell" type="push" title="8 hr" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="28800" imageScaling="proportionallyDown" inset="2" selectedItem="eoL-Hy-kiD" id="qbG-pX-tAk">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" title="OtherViews" id="WYR-G6-10N">
@@ -239,7 +242,7 @@
                                             <menuItem title="2 min" tag="120" id="J1M-mj-hxI">
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
-                                            <menuItem title="5 min" state="on" tag="300" id="Zwh-UY-4zY">
+                                            <menuItem title="5 min" tag="300" id="Zwh-UY-4zY">
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
                                             <menuItem title="15 min" tag="900" id="FiA-We-L1c">
@@ -257,7 +260,7 @@
                                             <menuItem title="4 hr" tag="14400" id="xL3-JK-1MW">
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
-                                            <menuItem title="8 hr" tag="28800" id="eoL-Hy-kiD">
+                                            <menuItem title="8 hr" state="on" tag="28800" id="eoL-Hy-kiD">
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
                                         </items>
